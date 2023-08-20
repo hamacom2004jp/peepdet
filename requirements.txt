@@ -1,0 +1,10 @@
+cython
+numpy
+insightface
+onnxruntime
+#onnxruntime-gpu
+#opencv-python
+#opencv-contrib-python
+pyinstaller
+pystray
+win11toast
