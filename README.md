@@ -10,14 +10,17 @@
 6. トレイアイコンを右クリックして`Stop`を押すことで監視を終了します。
 7. トレイアイコンを右クリックして`Quit`を押すことでアプリが終了します。 
 
-## Memo
+## 動作確認OS
+- `Windows 11 Pro`
+
+## 開発環境構築メモ
 
 ```
 python -m venv .venv
 .venv\Scripts\activate
 python.exe -m pip install --upgrade pip
 pip install -r requirements.txt
-python peepdet
+python -m peepdet
 pyinstaller peepdet/__main__.py -n peepdet --onefile --collect-all peepdet -i peepdet/start.ico -w --clean
 deactivate
 ```
