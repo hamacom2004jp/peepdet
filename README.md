@@ -25,3 +25,9 @@ pyinstaller peepdet/__main__.py -n peepdet --onefile --collect-all peepdet -i pe
 deactivate
 ```
 
+### gitリポジトリ
+```
+git clone https://github.com/hamacom2004jp/peepdet.git
+git push origin main
+```
+
