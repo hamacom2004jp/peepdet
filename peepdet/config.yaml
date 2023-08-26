@@ -1,0 +1,35 @@
+peepdet:
+    common:
+        #===========================================================================================
+        # Can specify model names that can be specified for face detection and face recognition.
+        # Name	Detection	Recognition	Alignment	Attributes	Model-Size
+        # antelopev2	RetinaFace-10GF	ResNet100@Glint360K	2d106 & 3d68	Gender&Age	407MB
+        # buffalo_l	RetinaFace-10GF	ResNet50@WebFace600K	2d106 & 3d68	Gender&Age	326MB
+        # buffalo_m	RetinaFace-2.5GF	ResNet50@WebFace600K	2d106 & 3d68	Gender&Age	313MB
+        # buffalo_s	RetinaFace-500MF	MBF@WebFace600K	2d106 & 3d68	Gender&Age	159MB
+        # buffalo_sc	RetinaFace-500MF	MBF@WebFace600K	-	-	16MB
+        FACE_ANA_NAME: buffalo_sc
+        #===========================================================================================
+        # Can specify the font for the score display when a face is detected.
+        # cv2.FONT_HERSHEY_SIMPLEX	0	シンプルなフォントスタイル
+        # cv2.FONT_HERSHEY_PLAIN	1	プレーンなフォントスタイル
+        # cv2.FONT_HERSHEY_DUPLEX	5	ダブルピクセルフォントスタイル
+        # cv2.FONT_HERSHEY_COMPLEX	6	複雑なフォントスタイル
+        # cv2.FONT_HERSHEY_TRIPLEX	7	トリプルピクセルフォントスタイル
+        # cv2.FONT_HERSHEY_COMPLEX_SMALL	8	小型の複雑なフォントスタイル
+        # cv2.FONT_HERSHEY_SCRIPT_SIMPLEX	9	シンプルなスクリプトフォントスタイル
+        # cv2.FONT_HERSHEY_SCRIPT_COMPLEX	10	複雑なスクリプトフォントスタイル
+        # cv2.FONT_HERSHEY_SCRIPT_COMPLEX_SMALL	11	小型の複雑なスクリプトフォントスタイル
+        FONT: 5
+        #===========================================================================================
+        # Can specify the font size for the score display when a face is detected.
+        FONT_SCALE: 20
+        #===========================================================================================
+        # Reacts when the score calculated by the ArcFace algorithm is smaller than the specified value.
+        DETECT_THRESHOLD: 0.5
+        #===========================================================================================
+        # If the time of continued reaction exceeds a specified number of seconds, it is considered to be peeping.
+        DETECT_PEEP_TIME: 5
+        #===========================================================================================
+        # The interval of seconds between shots taken by the camera.
+        CAPTURE_TIME: 1

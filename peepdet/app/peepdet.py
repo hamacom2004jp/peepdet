@@ -6,7 +6,6 @@ import cv2
 import shutil
 import threading
 import time
-import win11toast
 
 peep_th = None
 peep_loop = False
@@ -50,9 +49,9 @@ def process(app_data_dir:Path, camera_ids:list):
                 faces, rimg = common.fa_frame(frame, file, cap['fa'])
                 ret, idx, score = common.compare_face_embedding(store, faces)
                 if ret and time.time()-last_peep_tm > common.DETECT_PEEP_TIME:
-                    win11toast.toast(common.TITLE, f"Peepers detected.",
-                                     image=common.FILE_SCHEMA + str(file.resolve()),
-                                     on_click=str(peep_dir))
+                    common.toast(f"Peepers detected.", f'Some peeps are peeking in. Click on Notifications to see previous records.',
+                                 image=common.FILE_SCHEMA + str(file.resolve()),
+                                 on_click=str(peep_dir))
                     peep_file = peep_dir / f"{time.strftime('%Y%m%d%H%M%S')}_{file.name}"
                     shutil.move(file, peep_file)
                     last_peep_tm = time.time()

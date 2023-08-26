@@ -6,19 +6,36 @@ import numpy as np
 import os
 import traceback
 import sys
+import yaml
 import win11toast
 
 
 PGM_DIR = Path("peepdet")
-TITLE = 'Peep Detection'
+APP_ID = 'peepdet'
 ICON_FILE = PGM_DIR / 'start.ico'
 FILE_SCHEMA = 'file:///'
-FACE_ANA_NAME = 'buffalo_sc' # antelopev2, buffalo_l, buffalo_m, buffalo_s, buffalo_sc
-FONT = cv2.FONT_HERSHEY_DUPLEX
-FONT_SCALE = cv2.getFontScaleFromHeight(FONT, 20)
-DETECT_THRESHOLD = 0.5
-DETECT_PEEP_TIME = 5
-CAPTURE_TIME = 1
+
+def load_config():
+    global FACE_ANA_NAME
+    global FONT
+    global FONT_SCALE
+    global DETECT_THRESHOLD
+    global DETECT_PEEP_TIME
+    global CAPTURE_TIME
+    with open(PGM_DIR / 'config.yaml') as f:
+        config = yaml.safe_load(f)
+        c = config['peepdet']['common']
+        FACE_ANA_NAME = c['FACE_ANA_NAME']
+        FONT = int(c['FONT'])
+        FONT_SCALE = cv2.getFontScaleFromHeight(FONT, int(c['FONT_SCALE']))
+        DETECT_THRESHOLD = int(c['DETECT_THRESHOLD'])
+        DETECT_PEEP_TIME = int(c['DETECT_PEEP_TIME'])
+        CAPTURE_TIME = int(c['CAPTURE_TIME'])
+
+def create_fa():
+    fa = FaceAnalysis(name=FACE_ANA_NAME, providers=['CPUExecutionProvider']) #'CUDAExecutionProvider'
+    fa.prepare(ctx_id=0, det_size=(640, 640))
+    return fa
 
 def mkdirs(dir_path:Path):
     if not dir_path.exists():
@@ -27,15 +44,11 @@ def mkdirs(dir_path:Path):
         raise BaseException(f"Don't make diredtory.({str(dir_path)})")
     return dir_path
 
-def toast(message:str):
-    win11toast.toast(TITLE, message, icon=FILE_SCHEMA + str(ICON_FILE.resolve()))
+def toast(title:str, message:str, image:str=None, buttons:list=None, on_click:str=print):
+    return win11toast.toast(title, message, icon=FILE_SCHEMA + str(ICON_FILE.resolve()),
+                            image=image, buttons=buttons, on_click=on_click, app_id=APP_ID)
 
-def create_fa():
-    fa = FaceAnalysis(name=FACE_ANA_NAME, providers=['CPUExecutionProvider']) #'CUDAExecutionProvider'
-    fa.prepare(ctx_id=0, det_size=(640, 640))
-    return fa
-
-def fa_frame(frame:np.array, file:Path = None, fa:FaceAnalysis = create_fa()):
+def fa_frame(frame:np.array, file:Path, fa:FaceAnalysis):
     faces = fa.get(frame)
     rimg = np.copy(frame)
     for fi, face in enumerate(faces):
@@ -54,7 +67,7 @@ def clean_face_embedding(conf_dir:Path):
             os.remove(p)
 
 def save_face_embedding(frame:np.array, file:Path):
-    faces, rimg = fa_frame(frame, file)
+    faces, rimg = fa_frame(frame, file, create_fa())
     for fi, face in enumerate(faces):
         efile = file.parent / f"face_{fi}.npy"
         np.save(efile, face.embedding)
@@ -66,13 +79,13 @@ def load_face_embedding(conf_dir:Path):
             face_embedding.append(np.load(file))
     return face_embedding
 
-def compare_face_embedding(store:list, faces:list, th:float = DETECT_THRESHOLD):
+def compare_face_embedding(store:list, faces:list):
     last_score = -1
     for i,face in enumerate(faces):
         for feat in store:
             score = _compute_sim(feat, face.embedding)
             #print(f"{score} < {th}")
-            if score < th:
+            if score < DETECT_THRESHOLD:
                 return True, i, score
             last_score = score
     return False, -1, last_score

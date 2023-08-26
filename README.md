@@ -13,9 +13,11 @@
 ## 動作確認OS
 - `Windows 11 Pro`
 
-## 開発環境構築メモ
+## ビルド方法
 
 ```
+git clone https://github.com/hamacom2004jp/peepdet.git
+cd peepdet
 python -m venv .venv
 .venv\Scripts\activate
 python.exe -m pip install --upgrade pip
@@ -31,3 +33,6 @@ git clone https://github.com/hamacom2004jp/peepdet.git
 git push origin main
 ```
 
+# Lisence
+
+This project is licensed under the MIT License, see the LICENSE.txt file for details
