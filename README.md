@@ -60,6 +60,8 @@ deactivate
 
 #### 開発環境でのpeepdetの実行方法
 ```
+cd peepdet
+.venv\Scripts\activate
 python -m peepdet
 ```
 

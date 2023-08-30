@@ -44,9 +44,12 @@ def mkdirs(dir_path:Path):
         raise BaseException(f"Don't make diredtory.({str(dir_path)})")
     return dir_path
 
-def toast(title:str, message:str, image:str=None, buttons:list=None, on_click:str=print):
-    return win11toast.toast(title, message, icon=FILE_SCHEMA + str(ICON_FILE.resolve()),
+def toast(title:str, message:str, image:str=None, buttons:list=None, on_click:str=print, logger=None):
+    ret = win11toast.toast(title, message, icon=FILE_SCHEMA + str(ICON_FILE.resolve()),
                             image=image, buttons=buttons, on_click=on_click, app_id=APP_ID)
+    if logger is not None:
+        logger.info(f"toast : {title}, {message}, {ret}")
+    return ret
 
 def fa_frame(frame:np.array, file:Path, fa:FaceAnalysis):
     faces = fa.get(frame)
@@ -66,16 +69,18 @@ def clean_face_embedding(conf_dir:Path):
         if os.path.isfile(p):
             os.remove(p)
 
-def save_face_embedding(frame:np.array, file:Path):
+def save_face_embedding(frame:np.array, file:Path, logger):
     faces, rimg = fa_frame(frame, file, create_fa())
     for fi, face in enumerate(faces):
         efile = file.parent / f"face_{fi}.npy"
+        logger.info(f"save_face_embedding : {efile}")
         np.save(efile, face.embedding)
 
-def load_face_embedding(conf_dir:Path):
+def load_face_embedding(conf_dir:Path, logger):
     face_embedding = []
     for file in glob.glob(str(conf_dir) + '/*.npy', recursive=True):
         if os.path.isfile(file):
+            logger.info(f"load_face_embedding : {file}")
             face_embedding.append(np.load(file))
     return face_embedding
 
@@ -94,8 +99,8 @@ def compare_face_embedding(store:list, faces:list):
 def _compute_sim(feat1:np.array, feat2:np.array):
     return np.dot(feat1, feat2) / (np.linalg.norm(feat1) * np.linalg.norm(feat2))
 
-def e_msg(e:Exception):
+def e_msg(e:Exception, logger):
     tb = sys.exc_info()[2]
-    print(traceback.format_exc())
+    logger.debug(traceback.format_exc())
     return e.with_traceback(tb)
 
